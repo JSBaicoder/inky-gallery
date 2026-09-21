@@ -1,0 +1,23 @@
+# Downloaded/generated artwork
+input/
+output/
+curation/current/
+
+# Runtime logs and locks
+logs/
+.run_lock/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Secrets
+.env
+*.env
+openai.env
+
+# OS/editor files
+.DS_Store
+*.swp

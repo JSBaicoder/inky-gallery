@@ -1,0 +1,26 @@
+[
+  {
+    "key": "met:437299",
+    "displayed_at": "2026-09-19T19:15:03.402012-04:00",
+    "source": "met",
+    "source_id": 437299,
+    "title": "Jalais Hill, Pontoise",
+    "artist": "Camille Pissarro",
+    "date": "1867",
+    "medium": "Oil on canvas",
+    "orientation": "landscape",
+    "source_url": "https://www.metmuseum.org/art/collection/search/437299"
+  },
+  {
+    "key": "cleveland:136758",
+    "displayed_at": "2026-09-19T22:39:15.194435-04:00",
+    "source": "cleveland",
+    "source_id": 136758,
+    "title": "Birds and Ducks on a Snowy Islet",
+    "artist": null,
+    "date": "mid-1200s",
+    "medium": "Album leaf; ink and slight color on silk",
+    "orientation": "landscape",
+    "source_url": "https://clevelandart.org/art/1961.260"
+  }
+]
