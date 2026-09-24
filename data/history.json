@@ -22,5 +22,65 @@
     "medium": "Album leaf; ink and slight color on silk",
     "orientation": "landscape",
     "source_url": "https://clevelandart.org/art/1961.260"
+  },
+  {
+    "key": "cleveland:107986",
+    "displayed_at": "2026-09-22T08:05:39.036142-04:00",
+    "source": "cleveland",
+    "source_id": 107986,
+    "title": "Sunday 1897",
+    "artist": "George Bellows (American, 1882–1925)",
+    "date": "1921",
+    "medium": "lithograph",
+    "orientation": "landscape",
+    "source_url": "https://clevelandart.org/art/1925.607"
+  },
+  {
+    "key": "nga:53934",
+    "displayed_at": "2026-09-22T16:34:13.460220-04:00",
+    "source": "nga",
+    "source_id": 53934,
+    "title": "Pan and Syrinx",
+    "artist": "Herman van Swanevelt",
+    "date": "published 1773",
+    "medium": "etching",
+    "orientation": "landscape",
+    "source_url": "https://www.nga.gov/artworks/53934-pan-and-syrinx"
+  },
+  {
+    "key": "met:392079",
+    "displayed_at": "2026-09-22T21:52:03.469117-04:00",
+    "source": "met",
+    "source_id": 392079,
+    "title": "Christ Crucified Between the Two Thieves (The Three Crosses)",
+    "artist": "Rembrandt (Rembrandt van Rijn)",
+    "date": "1653",
+    "medium": "Drypoint",
+    "orientation": "landscape",
+    "source_url": "https://www.metmuseum.org/art/collection/search/392079"
+  },
+  {
+    "key": "cleveland:143195",
+    "displayed_at": "2026-09-23T08:13:22.467693-04:00",
+    "source": "cleveland",
+    "source_id": 143195,
+    "title": "An Elderly Man in Prayer",
+    "artist": "Rembrandt van Rijn (Dutch, 1606–1669)",
+    "date": "1660s or later",
+    "medium": "oil on canvas",
+    "orientation": "portrait",
+    "source_url": "https://clevelandart.org/art/1967.16"
+  },
+  {
+    "key": "nga:83",
+    "displayed_at": "2026-09-23T21:34:52.479555-04:00",
+    "source": "nga",
+    "source_id": 83,
+    "title": "Lucretia",
+    "artist": "Rembrandt van Rijn",
+    "date": "1664",
+    "medium": "oil on canvas",
+    "orientation": "portrait",
+    "source_url": "https://www.nga.gov/artworks/83-lucretia"
   }
 ]

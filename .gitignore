@@ -2,6 +2,10 @@
 input/
 output/
 curation/current/
+curation/request_pool/
+
+# Runtime request state
+data/request_queue.json
 
 # Runtime logs and locks
 logs/

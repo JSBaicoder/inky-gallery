@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageEnhance, ImageOps
 
 
 GALLERY_DIR = Path.home() / "gallery"
@@ -29,18 +29,16 @@ PREPARATION_FILE = (
     / "preparation.json"
 )
 
-
 TARGET_SIZE = (1600, 1200)
 TARGET_RATIO = TARGET_SIZE[0] / TARGET_SIZE[1]
 
-# If filling 4:3 would remove more than 12% of the
-# image along one dimension, preserve the entire artwork
-# instead of forcing a crop.
 MAX_CROP_FRACTION = 0.12
 
-# Warm neutral paper tone for artwork that should not
-# be aggressively cropped.
-PAPER_BACKGROUND = (243, 240, 232)
+PAPER_BACKGROUND = (
+    243,
+    240,
+    232,
+)
 
 
 def load_selection():
@@ -58,16 +56,12 @@ def calculate_crop_fraction(
     source_ratio = width / height
 
     if source_ratio > TARGET_RATIO:
-        # Image is wider than 4:3.
-        # Horizontal content would need to be removed.
         return 1 - (
             TARGET_RATIO
             / source_ratio
         )
 
     if source_ratio < TARGET_RATIO:
-        # Image is taller than 4:3.
-        # Vertical content would need to be removed.
         return 1 - (
             source_ratio
             / TARGET_RATIO
@@ -116,11 +110,86 @@ def prepare_with_full_artwork(image):
     return canvas
 
 
+def enhance_for_eink(
+    image,
+    selection,
+):
+    medium = (
+        selection.get("medium")
+        or ""
+    ).lower()
+
+    line_art_terms = (
+        "etching",
+        "engraving",
+        "drypoint",
+        "mezzotint",
+        "aquatint",
+        "lithograph",
+        "woodcut",
+        "woodblock",
+        "pen and ink",
+    )
+
+    is_line_art = any(
+        term in medium
+        for term in line_art_terms
+    )
+
+    if is_line_art:
+        image = ImageOps.autocontrast(
+            image,
+            cutoff=1,
+        )
+
+        image = (
+            ImageEnhance.Contrast(
+                image
+            ).enhance(1.18)
+        )
+
+        image = (
+            ImageEnhance.Sharpness(
+                image
+            ).enhance(1.35)
+        )
+
+        enhancement_mode = (
+            "line_art"
+        )
+
+    else:
+        image = ImageOps.autocontrast(
+            image,
+            cutoff=0.5,
+        )
+
+        image = (
+            ImageEnhance.Contrast(
+                image
+            ).enhance(1.08)
+        )
+
+        image = (
+            ImageEnhance.Sharpness(
+                image
+            ).enhance(1.12)
+        )
+
+        enhancement_mode = (
+            "general"
+        )
+
+    return image, enhancement_mode
+
+
 def prepare_selected():
     selection = load_selection()
 
     source_path = Path(
-        selection["original_image_path"]
+        selection[
+            "original_image_path"
+        ]
     )
 
     if not source_path.exists():
@@ -129,7 +198,9 @@ def prepare_selected():
             f"{source_path}"
         )
 
-    with Image.open(source_path) as image:
+    with Image.open(
+        source_path
+    ) as image:
         image = image.convert("RGB")
 
         source_width = image.width
@@ -148,8 +219,10 @@ def prepare_selected():
         ):
             method = "crop_to_fill"
 
-            prepared = prepare_with_crop(
-                image
+            prepared = (
+                prepare_with_crop(
+                    image
+                )
             )
 
         else:
@@ -163,31 +236,58 @@ def prepare_selected():
                 )
             )
 
+        (
+            prepared,
+            enhancement_mode,
+        ) = enhance_for_eink(
+            prepared,
+            selection,
+        )
+
     prepared.save(
         OUTPUT_FILE,
         format="PNG",
     )
 
     preparation = {
-        "source": selection["source"],
-        "source_id": selection["source_id"],
-        "title": selection["title"],
-        "artist": selection["artist"],
-        "original_image_path": str(
-            source_path
+        "source": (
+            selection["source"]
         ),
-        "prepared_image_path": str(
-            OUTPUT_FILE
+        "source_id": (
+            selection["source_id"]
         ),
-        "source_width": source_width,
-        "source_height": source_height,
-        "target_width": TARGET_SIZE[0],
-        "target_height": TARGET_SIZE[1],
+        "title": (
+            selection["title"]
+        ),
+        "artist": (
+            selection["artist"]
+        ),
+        "original_image_path": (
+            str(source_path)
+        ),
+        "prepared_image_path": (
+            str(OUTPUT_FILE)
+        ),
+        "source_width": (
+            source_width
+        ),
+        "source_height": (
+            source_height
+        ),
+        "target_width": (
+            TARGET_SIZE[0]
+        ),
+        "target_height": (
+            TARGET_SIZE[1]
+        ),
         "crop_fraction": round(
             crop_fraction,
             4,
         ),
         "method": method,
+        "eink_enhancement": (
+            enhancement_mode
+        ),
     }
 
     with PREPARATION_FILE.open(
@@ -209,9 +309,9 @@ def main():
         prepare_selected()
     )
 
-    print(
-        "\nPREPARED ARTWORK\n"
-    )
+    print()
+    print("PREPARED ARTWORK")
+    print()
 
     print(
         json.dumps(
@@ -221,8 +321,9 @@ def main():
         )
     )
 
+    print()
     print(
-        "\nArtwork has NOT been "
+        "Artwork has NOT been "
         "added to display history."
     )
 
