@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Inky Gallery every morning
+
+[Timer]
+OnCalendar=*-*-* 08:00:00
+Persistent=true
+Unit=inky-gallery.service
+
+[Install]
+WantedBy=timers.target

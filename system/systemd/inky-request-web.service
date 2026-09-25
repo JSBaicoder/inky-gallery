@@ -1,0 +1,16 @@
+[Unit]
+Description=Inky Gallery Request Web Interface
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/gallery
+ExecStart=/home/pi/inky-venv/bin/python -m core.request_web
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

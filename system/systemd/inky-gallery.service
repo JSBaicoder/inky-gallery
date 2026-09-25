@@ -1,0 +1,11 @@
+[Unit]
+Description=Inky Daily Gallery Update
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/gallery
+ExecStart=/home/pi/gallery/run_gallery.sh
