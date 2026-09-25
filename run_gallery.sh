@@ -27,4 +27,4 @@ cd "$GALLERY_DIR" || exit 1
 
 source "$VENV_DIR/bin/activate"
 
-exec python -m core.run_logged
+python -m core.run_logged

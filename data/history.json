@@ -106,5 +106,17 @@
     "medium": "Oil Paint (Paint), Canvas (Textile Material)",
     "orientation": "landscape",
     "source_url": "https://www.getty.edu/art/collection/object/103RDT"
+  },
+  {
+    "key": "nga:46652",
+    "displayed_at": "2026-09-25T09:55:51.281322-04:00",
+    "source": "nga",
+    "source_id": 46652,
+    "title": "Banks of the Seine, Vétheuil",
+    "artist": "Claude Monet",
+    "date": "1880",
+    "medium": "oil on canvas",
+    "orientation": "landscape",
+    "source_url": "https://www.nga.gov/artworks/46652-banks-of-the-seine-v-theuil"
   }
 ]
