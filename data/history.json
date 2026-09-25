@@ -82,5 +82,29 @@
     "medium": "oil on canvas",
     "orientation": "portrait",
     "source_url": "https://www.nga.gov/artworks/83-lucretia"
+  },
+  {
+    "key": "getty:a0d1a0b8-5cb5-4681-833a-1de48cae1e92",
+    "displayed_at": "2026-09-24T17:31:01.744830-04:00",
+    "source": "getty",
+    "source_id": "a0d1a0b8-5cb5-4681-833a-1de48cae1e92",
+    "title": "Centaur and Lapith",
+    "artist": "Francesco Primaticcio",
+    "date": null,
+    "medium": "Drawings",
+    "orientation": "landscape",
+    "source_url": "https://www.getty.edu/art/collection/object/103R3W"
+  },
+  {
+    "key": "getty:bbc7f8e6-b158-4b97-acda-ac59625fe9d8",
+    "displayed_at": "2026-09-25T06:05:57.106345-04:00",
+    "source": "getty",
+    "source_id": "bbc7f8e6-b158-4b97-acda-ac59625fe9d8",
+    "title": "Larder Still Life with Housekeeper and Young Boy",
+    "artist": "Frans Snijders; Jan Boeckhorst; Peter Paul Rubens",
+    "date": "Previous Attribution Time Span for Frans Snijders",
+    "medium": "Oil Paint (Paint), Canvas (Textile Material)",
+    "orientation": "landscape",
+    "source_url": "https://www.getty.edu/art/collection/object/103RDT"
   }
 ]

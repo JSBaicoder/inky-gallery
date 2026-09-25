@@ -1,6 +1,8 @@
 import os
+import re
 import shutil
 import stat
+import subprocess
 import sys
 import tempfile
 import urllib.request
@@ -13,6 +15,10 @@ ENV_FILE = Path.home() / ".config" / "inky" / "openai.env"
 MODEL = "gpt-5.6-terra"
 
 EXPECTED_INKY_RESOLUTION = (1600, 1200)
+
+WITTY_SERVICE = "wp5d.service"
+WITTY_I2C_BUS = 1
+WITTY_I2C_ADDRESS = 0x51
 
 MIN_CRITICAL_FREE_BYTES = 500 * 1024 * 1024
 MIN_RECOMMENDED_FREE_BYTES = 2 * 1024 * 1024 * 1024
@@ -79,13 +85,11 @@ def fail_result(message):
 
 def format_bytes(value):
     units = ["B", "KB", "MB", "GB", "TB"]
-
     size = float(value)
 
     for unit in units:
         if size < 1024 or unit == units[-1]:
             return f"{size:.1f} {unit}"
-
         size /= 1024
 
 
@@ -98,10 +102,7 @@ def load_api_key():
     if not ENV_FILE.exists():
         return None
 
-    with ENV_FILE.open(
-        "r",
-        encoding="utf-8",
-    ) as file:
+    with ENV_FILE.open("r", encoding="utf-8") as file:
         for line in file:
             line = line.strip()
 
@@ -135,9 +136,7 @@ def check_required_files():
             fail_result(
                 f"Missing required file: {path}"
             )
-
         failures += len(missing)
-
     else:
         pass_result(
             "All required gallery source files exist."
@@ -154,16 +153,14 @@ def check_directories():
             fail_result(
                 f"Missing directory: {directory}"
             )
-
             failures += 1
             continue
 
         if not directory.is_dir():
             fail_result(
-                f"Expected directory but found "
+                "Expected directory but found "
                 f"something else: {directory}"
             )
-
             failures += 1
 
     if failures == 0:
@@ -187,23 +184,18 @@ def check_write_access():
         pass_result(
             "Gallery directory is writable."
         )
-
         return 0
 
     except Exception as error:
         fail_result(
-            f"Gallery directory is not writable: "
+            "Gallery directory is not writable: "
             f"{error}"
         )
-
         return 1
 
 
 def check_disk_space():
-    usage = shutil.disk_usage(
-        GALLERY_DIR
-    )
-
+    usage = shutil.disk_usage(GALLERY_DIR)
     free = usage.free
 
     if free < MIN_CRITICAL_FREE_BYTES:
@@ -211,7 +203,6 @@ def check_disk_space():
             "Critically low disk space: "
             f"{format_bytes(free)} free."
         )
-
         return 1
 
     if free < MIN_RECOMMENDED_FREE_BYTES:
@@ -219,13 +210,11 @@ def check_disk_space():
             "Disk space is getting low: "
             f"{format_bytes(free)} free."
         )
-
         return 0
 
     pass_result(
         f"Disk space: {format_bytes(free)} free."
     )
-
     return 0
 
 
@@ -238,12 +227,10 @@ def check_python_dependencies():
         pass_result(
             "Pillow is installed."
         )
-
     except ImportError:
         fail_result(
             "Pillow is not installed."
         )
-
         failures += 1
 
     try:
@@ -252,12 +239,10 @@ def check_python_dependencies():
         pass_result(
             "OpenAI Python SDK is installed."
         )
-
     except ImportError:
         fail_result(
             "OpenAI Python SDK is not installed."
         )
-
         failures += 1
 
     try:
@@ -266,12 +251,10 @@ def check_python_dependencies():
         pass_result(
             "Inky Python library is installed."
         )
-
     except ImportError:
         fail_result(
             "Inky Python library is not installed."
         )
-
         failures += 1
 
     return failures
@@ -280,10 +263,9 @@ def check_python_dependencies():
 def check_api_key_file():
     if not ENV_FILE.exists():
         fail_result(
-            f"OpenAI environment file is missing: "
+            "OpenAI environment file is missing: "
             f"{ENV_FILE}"
         )
-
         return 1
 
     mode = stat.S_IMODE(
@@ -295,7 +277,6 @@ def check_api_key_file():
             "OpenAI environment file permissions "
             f"are {oct(mode)}; expected 0o600."
         )
-
     else:
         pass_result(
             "OpenAI environment file permissions "
@@ -308,13 +289,11 @@ def check_api_key_file():
         fail_result(
             "OPENAI_API_KEY could not be loaded."
         )
-
         return 1
 
     pass_result(
         "OPENAI_API_KEY is available."
     )
-
     return 0
 
 
@@ -330,24 +309,21 @@ def check_openai():
 
         if model.id != MODEL:
             fail_result(
-                f"Unexpected OpenAI model response: "
+                "Unexpected OpenAI model response: "
                 f"{model.id}"
             )
-
             return 1
 
         pass_result(
-            f"OpenAI connection works and "
+            "OpenAI connection works and "
             f"{MODEL} is available."
         )
-
         return 0
 
     except Exception as error:
         fail_result(
             f"OpenAI API check failed: {error}"
         )
-
         return 1
 
 
@@ -373,14 +349,12 @@ def check_url(name, url):
         pass_result(
             f"{name} source is reachable."
         )
-
         return True
 
     except Exception as error:
         warn_result(
             f"{name} source check failed: {error}"
         )
-
         return False
 
 
@@ -396,7 +370,6 @@ def check_sources():
             "None of the museum sources "
             "are reachable."
         )
-
         return 1
 
     if available < len(SOURCE_CHECKS):
@@ -404,7 +377,6 @@ def check_sources():
             f"{available}/{len(SOURCE_CHECKS)} "
             "museum sources are currently reachable."
         )
-
     else:
         pass_result(
             "All four museum sources are reachable."
@@ -418,30 +390,112 @@ def check_inky():
         from inky.auto import auto
 
         display = auto()
-
         resolution = display.resolution
 
         if resolution != EXPECTED_INKY_RESOLUTION:
             fail_result(
-                f"Unexpected Inky resolution: "
+                "Unexpected Inky resolution: "
                 f"{resolution}"
             )
-
             return 1
 
         pass_result(
-            "Inky display detected at "
-            "1600x1200."
+            "Inky display detected at 1600x1200."
         )
-
         return 0
 
     except Exception as error:
         fail_result(
             f"Inky detection failed: {error}"
         )
-
         return 1
+
+
+def check_witty():
+    failures = 0
+
+    try:
+        service = subprocess.run(
+            [
+                "systemctl",
+                "is-active",
+                "--quiet",
+                WITTY_SERVICE,
+            ],
+            check=False,
+        )
+
+        if service.returncode == 0:
+            pass_result(
+                "Witty Pi 5 daemon is active."
+            )
+        else:
+            fail_result(
+                "Witty Pi 5 daemon is not active."
+            )
+            failures += 1
+
+    except Exception as error:
+        fail_result(
+            "Could not check Witty Pi 5 daemon: "
+            f"{error}"
+        )
+        failures += 1
+
+    try:
+        result = subprocess.run(
+            [
+                "i2cdetect",
+                "-y",
+                str(WITTY_I2C_BUS),
+                hex(WITTY_I2C_ADDRESS),
+                hex(WITTY_I2C_ADDRESS),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+
+        if result.returncode != 0:
+            fail_result(
+                "Witty Pi 5 I2C probe failed."
+            )
+            failures += 1
+        else:
+            witty_found = bool(
+                re.search(
+                    r"^50:.*\b51\b",
+                    result.stdout,
+                    re.MULTILINE,
+                )
+            )
+
+            if witty_found:
+                pass_result(
+                    "Witty Pi 5 detected at I2C address 0x51."
+                )
+            else:
+                fail_result(
+                    "Witty Pi 5 not detected at "
+                    "I2C address 0x51."
+                )
+                failures += 1
+
+    except FileNotFoundError:
+        fail_result(
+            "i2cdetect is not installed."
+        )
+        failures += 1
+
+    except Exception as error:
+        fail_result(
+            "Witty Pi 5 I2C check failed: "
+            f"{error}"
+        )
+        failures += 1
+
+    return failures
 
 
 def main():
@@ -468,17 +522,13 @@ def main():
     )
 
     failures += check_inky()
-
-    print(
-        "[SKIP] Witty Pi 5 not installed yet."
-    )
+    failures += check_witty()
 
     if failures:
         print(
-            f"\nPREFLIGHT FAILED: "
+            "\nPREFLIGHT FAILED: "
             f"{failures} critical problem(s)."
         )
-
         sys.exit(1)
 
     print(
